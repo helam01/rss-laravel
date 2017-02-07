@@ -6,6 +6,7 @@ use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
 
 class RegisterController extends Controller
 {
@@ -50,7 +51,7 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|min:6|confirmed',
+            'password' => 'required|min:6',
         ]);
     }
 
@@ -73,5 +74,25 @@ class RegisterController extends Controller
     public function getRegistration()
     {
         return view('public.registration');
+    }
+
+
+    public function postRegistration(Request $request)
+    {
+        $inputs = $request->all();
+
+        $validator = $this->validator($inputs);
+        if ($validator->fails()) {
+            return redirect()->back()
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+
+        $this->create($inputs);
+
+        return redirect('/login')->with('alert',[
+                'message' => 'Cadastro realizado com sucesso. Agora você pode logar.',
+                'type' => 'success',
+            ]);
     }
 }
