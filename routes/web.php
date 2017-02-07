@@ -11,6 +11,15 @@
 |
 */
 
-Route::get('/', 'Auth\LoginController@getLogin')->name('getLogin');
 Route::get('login', 'Auth\LoginController@getLogin')->name('getLogin');
+Route::post('login', 'Auth\LoginController@postLogin')->name('postLogin');
+
 Route::get('cadastro', 'Auth\RegisterController@getRegistration')->name('getRegistration');
+Route::post('cadastro', 'Auth\RegisterController@postRegistration')->name('postRegistration');
+
+
+Route::group(['middleware' => 'auth'], function () {
+	Route::get('logout', 'Auth\LoginController@getLogout')->name('getLogout');
+	Route::get('/', 'HomeController@getIndex')->name('getIndex');
+	Route::get('home', 'HomeController@getIndex')->name('getIndex');
+});
