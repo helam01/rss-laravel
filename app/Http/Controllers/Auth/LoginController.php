@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -41,5 +43,20 @@ class LoginController extends Controller
     public function getLogin()
     {
         return view('public.login');
+    }
+
+    public function postLogin(Request $request)
+    {
+        $inputs = $request->all();
+
+        if (Auth::attempt(['email' => $inputs['email'], 'password' => $inputs['password']])) {
+            return redirect()->intended('home');
+
+        } else {
+             return redirect('/login')->with('alert',[
+                'message' => 'Email ou senha inválidos',
+                'type' => 'danger',
+            ]);
+        }
     }
 }
